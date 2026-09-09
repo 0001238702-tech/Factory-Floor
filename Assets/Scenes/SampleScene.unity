@@ -58035,7 +58035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GerenciadorArmadilhas
   tipo: 0
   distancia: 4
-  velocidade: 5
+  velocidade: 3
   tempoAtivo: 2
   tempoInativo: 1.5
   atrasoInicial: 0

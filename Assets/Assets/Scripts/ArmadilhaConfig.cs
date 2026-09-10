@@ -8,7 +8,6 @@ public class ArmadilhaConfig : MonoBehaviour
 {
     [Header("Configuração Geral")]
     [SerializeField] private Collider2D colisorDano;
-    
     [SerializeField] private TipoArmadilha tipo = TipoArmadilha.Espetos;
     [SerializeField] private float atrasoInicial = 0f;  
     [Header("Configuração Espetos")]
@@ -19,14 +18,17 @@ public class ArmadilhaConfig : MonoBehaviour
     [SerializeField] private GameObject prefabProjetil;
     [SerializeField] private Transform pontoDisparo;
     [SerializeField] private float velocidadeProjetil = 5f;
+    
+
 
     private Vector3 posInicial;
     private Animator anim;
-    private bool emAtraso = false;
-    private float cronometro;
+    private bool emAtraso = true;
+    private float cronometro = 0f;
  
     private void Start()
     {
+        emAtraso = true;
         posInicial = transform.position;
         anim = GetComponent<Animator>();
 
@@ -34,8 +36,7 @@ public class ArmadilhaConfig : MonoBehaviour
 
         if (tipo == TipoArmadilha.Espetos && atrasoInicial > 0)
         {
-            emAtraso = true;
-            DesligarEspetos();
+            
         }
     }
 
@@ -45,7 +46,8 @@ public class ArmadilhaConfig : MonoBehaviour
         switch (tipo)
         {
             case TipoArmadilha.Espetos:
-                AtualizarEspetos();
+
+                AtivarEspetos();
                 break;
 
             case TipoArmadilha.Torreta:
@@ -54,68 +56,37 @@ public class ArmadilhaConfig : MonoBehaviour
         }
     }
 
-    private void AtualizarEspetos()
+
+    private void AtivarEspetos()
     {
-        if (emAtraso)
-        {
-            cronometro += Time.deltaTime;
-
-            if (cronometro >= atrasoInicial)
-            {
-                emAtraso = false;
-                cronometro = 0f;
-
-                // Começa no Estado 1
-                anim.SetInteger("Estado", 1);
-            }
-
-            return;
-        }
-
         cronometro += Time.deltaTime;
 
-        switch (anim.GetInteger("Estado"))
+        if (cronometro <= atrasoInicial && emAtraso == true)
         {
-            case 1:
-                // Estado 1 - Subindo
-
-                if (cronometro >= tempoInativo)
-                {
-                    anim.SetInteger("Estado", 2);
-                    cronometro = 0f;
-
-                    LigarEspetos();
-                }
-
-                break;
-
-            case 2:
-                // Estado 2 - Exposto
-
-                LigarEspetos();
-
-                if (cronometro >= tempoAtivo)
-                {
-                    anim.SetInteger("Estado", 1);
-                    cronometro = 0f;
-
-                    DesligarEspetos();
-                }
-
-                break;
+                        
+            // Começa no Estado 1
+            anim.SetInteger("Estado", 0);
         }
-    }
 
-    private void LigarEspetos()
-    {
-        if (colisorDano != null) colisorDano.enabled = true;
-        if (anim != null) anim.SetBool("Ativado", true);
-    }
 
-    private void DesligarEspetos()
-    {
-        if (colisorDano != null) colisorDano.enabled = false;
-        if (anim != null) anim.SetBool("Ativado", false);
+        else if (cronometro < tempoAtivo + atrasoInicial)
+        {
+            Debug.Log("Ativando o Espeto");
+            anim.SetInteger("Estado", 1);
+           colisorDano.enabled = true;
+        }
+        else if (cronometro < tempoAtivo + tempoInativo + atrasoInicial)
+        {
+                Debug.Log("Desativando o Espeto");
+                anim.SetInteger("Estado", 2);
+            colisorDano.enabled= false;
+        }
+        else 
+        { 
+        cronometro = 0f;
+            emAtraso = false;
+            atrasoInicial = 0f;
+        }
     }
 
     private void AtualizarTorreta()

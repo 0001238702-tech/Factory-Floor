@@ -18,7 +18,10 @@ public class ArmadilhaConfig : MonoBehaviour
     [SerializeField] private GameObject prefabProjetil;
     [SerializeField] private Transform pontoDisparo;
     [SerializeField] private float velocidadeProjetil = 5f;
-    
+
+    [SerializeField] private AudioClip somDisparo;
+    private AudioSource audioSource;
+
 
 
     private Vector3 posInicial;
@@ -28,10 +31,15 @@ public class ArmadilhaConfig : MonoBehaviour
  
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        
+        
+        
         emAtraso = true;
         posInicial = transform.position;
-        anim = GetComponent<Animator>();
 
+        anim = GetComponent<Animator>();
+        
         if (colisorDano == null) colisorDano = GetComponent<Collider2D>();
 
         if (tipo == TipoArmadilha.Espetos && atrasoInicial > 0)
@@ -91,7 +99,16 @@ public class ArmadilhaConfig : MonoBehaviour
 
     private void AtualizarTorreta()
     {
-        cronometro -= Time.deltaTime;
+        cronometro += Time.deltaTime;
+
+        if (cronometro >= tempoEntreDisparos)
+        {
+
+
+            Disparar();
+
+            cronometro = 0f;
+        }
     }
 
     // --- DETECÇÃO DE DANO E REINÍCIO ---
@@ -113,6 +130,15 @@ public class ArmadilhaConfig : MonoBehaviour
             Invoke(nameof(ReiniciarCena), 1.5f);
         }
     }
+
+    public void Disparar()
+    {
+        GameObject projetil = Instantiate(prefabProjetil, pontoDisparo.position, pontoDisparo.rotation);
+        audioSource.PlayOneShot(somDisparo);
+    }
+
+
+
 
     private void ReiniciarCena()
     {

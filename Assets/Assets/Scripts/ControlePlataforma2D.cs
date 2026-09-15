@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -83,6 +84,20 @@ public class ControleJogador2D : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             estaNoChao = false;
+        }
+    }
+
+    public int vida = 10;
+
+    public void TomarDano()
+    {
+        vida--;
+
+        Debug.Log("Tomou dano" + vida);
+
+        if (vida <= 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }

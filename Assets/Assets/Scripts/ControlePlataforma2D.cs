@@ -11,12 +11,26 @@ public class ControleJogador2D : MonoBehaviour
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumpForce = 12f;
 
+    [Header("Efeitos Sonoros do Jogador")]
+    [SerializeField] private AudioClip somPulo;
+    [SerializeField] private AudioClip somPassos;
+    [SerializeField] private float intervaloPassos = 0.35f; // Tempo entre cada som de passada
+
+    private AudioSource audioSource;
+    private float timerPassos;
+
     private Rigidbody2D rb;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
 
     private float moveInputX;
     private bool estaNoChao;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        // ... restante da inicialização
+    }
 
     private void Awake()
     {
@@ -41,7 +55,18 @@ public class ControleJogador2D : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             estaNoChao = false; // Força a saída do chão imediatamente no frame do pulo
         }
+
+        TocarSomPulo();
     }
+
+    public void TocarSomPulo()
+    {
+        if (audioSource != null && somPulo != null)
+        {
+            audioSource.PlayOneShot(somPulo);
+        }
+    }
+
 
     private void Update()
     {
@@ -52,6 +77,27 @@ public class ControleJogador2D : MonoBehaviour
 
         // Inverte a direção do Sprite
         InverterSprite();
+
+        // --- LÓGICA DE PASSOS ---
+        // Toca passos apenas enquanto houver input horizontal e o jogador estiver no chão
+        if (Mathf.Abs(moveInputX) > 0.1f && estaNoChao)
+        {
+            timerPassos += Time.deltaTime;
+            if (timerPassos >= intervaloPassos)
+            {
+                if (audioSource != null && somPassos != null)
+                {
+                    audioSource.PlayOneShot(somPassos);
+                }
+                timerPassos = 0f;
+            }
+        }
+        else
+        {
+            timerPassos = intervaloPassos; // Reseta para tocar instantaneamente assim que voltar a andar
+        }
+
+
     }
 
     private void FixedUpdate()
@@ -86,19 +132,4 @@ public class ControleJogador2D : MonoBehaviour
             estaNoChao = false;
         }
     }
-
-    public int vida = 10;
-
-    public void TomarDano()
-    {
-        vida--;
-
-        Debug.Log("Tomou dano" + vida);
-
-        if (vida <= 0)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-    }
 }
-

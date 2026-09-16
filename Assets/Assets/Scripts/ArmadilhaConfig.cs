@@ -111,37 +111,9 @@ public class ArmadilhaConfig : MonoBehaviour
         }
     }
 
-    // --- DETECÇÃO DE DANO E REINÍCIO ---
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        ProcessarMorte(collider.gameObject);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        ProcessarMorte(collision.gameObject);
-    }
-
-    private void ProcessarMorte(GameObject objetoAtingido)
-    {
-        if (objetoAtingido.CompareTag("Player"))
-        {
-            Destroy(objetoAtingido);
-            Invoke(nameof(ReiniciarCena), 1.5f);
-        }
-    }
-
     public void Disparar()
     {
         GameObject projetil = Instantiate(prefabProjetil, pontoDisparo.position, pontoDisparo.rotation);
         audioSource.PlayOneShot(somDisparo);
-    }
-
-
-
-
-    private void ReiniciarCena()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

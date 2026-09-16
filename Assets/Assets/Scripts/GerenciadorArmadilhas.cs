@@ -101,29 +101,5 @@ public class GerenciadorArmadilhas : MonoBehaviour
         if (colisorLaser != null) colisorLaser.enabled = false;
         if (anim != null) anim.SetBool("Ativado", false);
     }
-
-    // --- DETECÇÃO DE DANO E REINÍCIO ---
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        ProcessarMorte(collider.gameObject);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        ProcessarMorte(collision.gameObject);
-    }
-
-    private void ProcessarMorte(GameObject objetoAtingido)
-    {
-        if (objetoAtingido.CompareTag("Player"))
-        {
-            Destroy(objetoAtingido);
-            Invoke(nameof(ReiniciarCena), 1.5f);
-        }
-    }
-
-    private void ReiniciarCena()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
 }
+    

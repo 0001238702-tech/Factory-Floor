@@ -18,7 +18,7 @@ public class ArmadilhaConfig : MonoBehaviour
     [SerializeField] private GameObject prefabProjetil;
     [SerializeField] private Transform pontoDisparo;
     [SerializeField] private float velocidadeProjetil = 5f;
-
+    [Header("Áudio da Torreta")]
     [SerializeField] private AudioClip somDisparo;
     private AudioSource audioSource;
 
@@ -115,5 +115,8 @@ public class ArmadilhaConfig : MonoBehaviour
     {
         GameObject projetil = Instantiate(prefabProjetil, pontoDisparo.position, pontoDisparo.rotation);
         audioSource.PlayOneShot(somDisparo);
+
+        
     }
+
 }
